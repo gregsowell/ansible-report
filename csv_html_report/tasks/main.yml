@@ -28,20 +28,6 @@
       state: present
     delegate_to: localhost
 
-  - name: Read in CSV to variable
-    community.general.read_csv:
-      path: "{{ csv_path }}/{{ csv_filename }}"
-    register: csv_file
-    delegate_to: localhost
-    run_once: true
-#    become: true
-
-  - name: debug csv_file
-    debug:
-      var: csv_file
-    run_once: true
-
-
 - name: block for sending email report
   when: action_type == 'email'
   block:
