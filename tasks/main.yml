@@ -1,0 +1,57 @@
+---
+- name: block for writing file
+  when: action_type == 'write'
+  block:
+  - name: check if csv already exists
+    stat:
+      path: "{{ csv_path }}/{{ csv_filename }}"
+    register: path_exists
+    delegate_to: localhost
+    run_once: true
+
+  - name: Save CSV headers
+    when: path_exists.stat.exists == false
+    ansible.builtin.lineinfile:
+      dest: "{{ csv_path }}/{{ csv_filename }}"
+      line: "{{ headers }}"
+      create: true
+      state: present
+    delegate_to: localhost
+    run_once: true
+#    become: true
+
+  - name: Build out CSV file
+    ansible.builtin.lineinfile:
+      dest: "{{ csv_path }}/{{ csv_filename }}"
+      line: "{{ write_line }}"
+      create: true
+      state: present
+    delegate_to: localhost
+
+- name: block for sending email report
+  when: action_type == 'email'
+  block:
+  - name: Read in CSV to variable
+    community.general.read_csv:
+      path: "{{ csv_path }}/{{ csv_filename }}"
+    register: csv_file
+    delegate_to: localhost
+    run_once: true
+
+#  - name: debug csv_file
+#    debug:
+#      var: csv_file
+#    run_once: true
+
+  - name: Send Email
+    community.general.mail:
+      host: "{{ email_host }}"
+      from: "{{ email_from }}"
+      port: 25
+      to: "{{ email_to }}"
+      subject: "[Ansible] {{ email_subject }}"
+      body: "{{ lookup('template', 'report.html.j2') }}"
+      attach: "{{ csv_path }}/{{ csv_filename }}"
+      subtype: html
+    delegate_to: localhost
+    run_once: true

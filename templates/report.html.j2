@@ -1,0 +1,14 @@
+<table style="border: 1px solid black; border-collapse: collapse;">
+<tr>
+    {% for header in headers.split(",") %}
+    <th style="border: 1px solid black; padding: 8px 16px;">{{ header }}</th>
+    {% endfor %}
+</tr>
+{% for host in csv_file.list %}
+<tr>
+    {% for header in headers.split(",") %}
+    <td style="border: 1px solid black; padding: 8px 16px;">{{ host[header] }}</td>
+    {% endfor %}
+</tr>
+{% endfor %}
+</table>
