@@ -7,7 +7,7 @@
     email_subject: Patching Report
     email_host: 10.0.110.32
     email_from: system@gregsowell.com
-    email_to: gsowell@redhat.com
+    email_to: gsowell@ciq.com
 
     #random settings
     csv_path: /tmp
